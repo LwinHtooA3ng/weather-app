@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
-import '../model/weather_model.dart';
 
 String apiKey = "5b5417e6c7659fa43f3f273715ad06c6";
 
@@ -20,9 +19,7 @@ class API {
       var res = await http.get(uri);
 
       if (res.statusCode == 200) {
-        // var weatherData = jsonDecode(res.body);
-        // return weatherData;
-        var weatherData = OverallResponse.fromRawJson(res.body);
+        var weatherData = jsonDecode(res.body);
         return weatherData;
       } else {
         throw Exception("Failed to get weather data.");
@@ -37,20 +34,10 @@ class API {
         "https://api.openweathermap.org/data/2.5/weather?q=$cityName&appid=$apiKey&units=metric");
     var res = await http.get(uri);
 
-    print("API C${res.statusCode}");
-
-    // return(res.statusCode);
-
-    // var weatherData = jsonDecode(res.body);
-    // return weatherData;
-
-    //     var weatherData = OverallResponse.fromRawJson(res.body);
-    // return weatherData;
-
     if (res.statusCode == 200) {
       // print("API Res body${res.body}");
-      var weatherData = OverallResponse.fromRawJson(res.body);
-      print(weatherData);
+      // var weatherData = OverallResponse.fromRawJson(res.body);
+        var weatherData = jsonDecode(res.body);
       return weatherData;
     } else if (res.statusCode == 404) {
       return 404;

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:weather/api/weather_api.dart';
 import 'package:google_fonts/google_fonts.dart';
-// import 'package:flutter_glow/flutter_glow.dart';
+import 'package:glass_kit/glass_kit.dart';
 
 const flutterColor = Color(0xFF40D0FD);
 
@@ -14,8 +14,9 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  var weatherData;
+  Map weatherData = {};
   String weatherImage = "";
+  String dayOrNight = "";
 
   TextEditingController city = TextEditingController();
 
@@ -26,7 +27,14 @@ class _HomeState extends State<Home> {
     setState(() {
       weatherData = res;
     });
-    var data = res.weather[0].id;
+    var icon = res["weather"][0]["icon"].split("")[2];
+    if (icon == "d") {
+      dayOrNight = "day";
+    } else {
+      dayOrNight = "night";
+    }
+    // print(icon);
+    var data = res["weather"][0]["id"];
     if (data >= 200 && data < 300) {
       weatherImage = "thunderstorm.png";
     } else if (data >= 300 && data < 500) {
@@ -43,19 +51,30 @@ class _HomeState extends State<Home> {
   getWeatherWithCityName(String cityName) async {
     var res = await API().getWeatherWithCityName(cityName);
 
-    print("Home>>>>$res");
+    // print("Home>>>>$res");
     if (res == 404) {
-      const snackBar = SnackBar(
-        content: Text('City not found'),
+      var snackBar = SnackBar(
+        backgroundColor: Colors.deepOrange,
+        duration: const Duration(seconds: 1),
+        content: Text(
+          'City not found',
+          style: GoogleFonts.ubuntu(
+              fontWeight: FontWeight.bold, color: Colors.white),
+        ),
       );
-
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     } else {
       setState(() {
         weatherData = res;
+        city.clear();
       });
-
-      var data = res.weather[0].id;
+      var icon = res["weather"][0]["icon"].split("")[2];
+      if (icon == "d") {
+        dayOrNight = "day";
+      } else {
+        dayOrNight = "night";
+      }
+      var data = res["weather"][0]["id"];
       if (data >= 200 && data < 300) {
         weatherImage = "thunderstorm.png";
       } else if (data >= 300 && data < 500) {
@@ -70,41 +89,6 @@ class _HomeState extends State<Home> {
     }
   }
 
-  // getWeatherWithCityName(String cityName) async {
-  //   var res = await API().getWeatherWithCityName(cityName);
-  //   // print(res.statusCode);
-
-  //   if (res.statusCode == 200) {
-  //     // print("ok");
-  //     setState(() {
-  //       weatherData = OverallResponse.fromRawJson(res.body);
-  //     });
-
-  //   } else if (res.statusCode == 404) {
-  //     print("no");
-  //   }
-  //   // if (res == 404) {
-  //   //   print("City not found.");
-  //   // }
-
-  //   // setState(() {
-  //   //   weatherData = res;
-  //   // });
-
-  //   // var data = res.weather[0].id;
-  //   // if (data >= 200 && data < 300) {
-  //   //   weatherImage = "thunderstorm.png";
-  //   // } else if (data >= 300 && data < 500) {
-  //   //   weatherImage = "drizzle.png";
-  //   // } else if (data >= 500 && data < 700) {
-  //   //   weatherImage = "rain.png";
-  //   // } else if (data > 800 && data < 900) {
-  //   //   weatherImage = "cloud.png";
-  //   // } else {
-  //   //   weatherImage = "sun.png";
-  //   // }
-  // }
-
   @override
   void initState() {
     getWeather();
@@ -115,108 +99,202 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[900],
-      body: SafeArea(
-        child: (weatherData == null)
-            ? const Center(
-                child: SpinKitPulse(
-                color: Colors.white,
-                size: 50.0,
-              ))
-            : SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    children: [
-                      TextField(
-                        controller: city,
-                        cursorColor: Colors.white,
-                        decoration: InputDecoration(
-                          hintText: "City Name",
-                          hintStyle: const TextStyle(fontSize: 13),
-                          contentPadding: const EdgeInsets.all(10),
-                          enabledBorder: const OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.white),
-                          ),
-                          focusedBorder: const OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.white),
-                          ),
-                          suffixIcon: IconButton(
-                            icon: const Icon(Icons.search_rounded),
-                            color: Colors.white,
-                            onPressed: () {
-                              (city.text.isEmpty)
-                                  ? print("empty")
-                                  : getWeatherWithCityName(city.text);
-                            },
+      // backgroundColor: Colors.grey[900],
+      // backgroundColor: Colors.grey[200],
+      backgroundColor: Colors.blueAccent,
+      body: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: SafeArea(
+          child: (weatherData.isEmpty)
+              ? const Center(
+                  child: SpinKitPulse(
+                  color: Colors.white,
+                  size: 50.0,
+                ))
+              : SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      children: [
+                        TextFormField(
+                          controller: city,
+                          // cursorColor: Colors.grey[900],
+                          cursorColor: Colors.grey[200],
+                          decoration: InputDecoration(
+                            hintText: "City Name",
+                            hintStyle: const TextStyle(fontSize: 13),
+                            contentPadding: const EdgeInsets.all(10),
+                            enabledBorder: const OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Colors.white,
+                              ),
+                              // borderSide: BorderSide(color: Colors.black,),
+                            ),
+                            focusedBorder: const OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Colors.white,
+                              ),
+                              // borderSide: BorderSide(color: Colors.black,),
+                            ),
+                            suffixIcon: IconButton(
+                              icon: const Icon(Icons.search_rounded),
+                              // color: Colors.black,
+                              color: Colors.white,
+                              onPressed: () {
+                                FocusScope.of(context).unfocus();
+                                (city.text.isEmpty)
+                                    ? null
+                                    : getWeatherWithCityName(city.text);
+                              },
+                            ),
                           ),
                         ),
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          // const Icon(
-                          //   Icons.location_on,
-                          //   size: 23,
-                          // ),
-                          // const SizedBox(
-                          //   width: 2,
-                          // ),
-                          Text(
-                            weatherData.name,
-                            style: GoogleFonts.ubuntu(
-                                fontWeight: FontWeight.bold, fontSize: 18),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 5),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                children: [
+                                  Row(
+                                    children: [
+                                      const Icon(
+                                        Icons.location_on,
+                                        size: 18,
+                                      ),
+                                      const SizedBox(
+                                        width: 2,
+                                      ),
+                                      Text(
+                                        weatherData["name"],
+                                        style: GoogleFonts.ubuntu(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 18),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(
+                                    height: 5,
+                                  ),
+                                  Text(DateTime.now()
+                                      .add(Duration(
+                                          seconds: weatherData["timezone"] -
+                                              DateTime.now()
+                                                  .timeZoneOffset
+                                                  .inSeconds))
+                                      .toString()
+                                      .split(" ")[0]),
+                                ],
+                              ),
+                              Text(weatherData["sys"]["country"]),
+                            ],
                           ),
-                          // Text(DateTime.now()
-                          //     .add(Duration(
-                          //         seconds: weatherData.timezone -
-                          //             DateTime.now().timeZoneOffset.inSeconds))
-                          //     .toString()
-                          //     .split(" ")[0]),
-                          Text(weatherData.sys.country),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 30,
-                      ),
-                      Image(
-                        image: AssetImage("images/$weatherImage"),
-                        width: 220,
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Text(weatherData.weather[0].description,
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Image(
+                          image: AssetImage("images/$dayOrNight/$weatherImage"),
+                          width: 220,
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Text(weatherData["weather"][0]["description"],
+                            style: GoogleFonts.ubuntu(
+                                fontSize: 15,
+                                letterSpacing: 1,
+                                fontWeight: FontWeight.w100)),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Text(
+                          "${weatherData["main"]["temp"].toString().split(".")[0]}°C",
+                          // style: const TextStyle(
+                          //   // color: Colors.blueAccent,
+                          //   fontWeight: FontWeight.bold,
+                          //   fontSize: 50,
+                          // )),
                           style: GoogleFonts.ubuntu(
-                              fontSize: 15,
-                              letterSpacing: 1,
-                              fontWeight: FontWeight.w100)),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Text(
-                          "${weatherData.main.temp.toString().split(".")[0]}°C",
-                          style: TextStyle(
-                            color: Colors.grey[100],
                             fontWeight: FontWeight.bold,
                             fontSize: 50,
-                          )),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 30,
+                        ),
+                        // SizedBox(
+                        //   width: 320,
+                        //   height: 150,
+                        //   child: Card(
 
-                      // Text(DateTime.now()
-                      //     .add(Duration(
-                      //         seconds: weatherData.timezone -
-                      //             DateTime.now().timeZoneOffset.inSeconds))
-                      //     .toString()
-                      //     .split(" ")[0]),
-                      // Image.network(
-                      //     "http://openweathermap.org/img/w/${weatherData.weather[0].icon}.png")
-                    ],
+                        //   ),
+                        // ),
+                        GlassContainer.clearGlass(
+                          height: 110, width: 300,
+                          borderRadius: BorderRadius.circular(8),
+                          padding: const EdgeInsets.all(15),
+                          borderWidth: 0,
+                          // blur: 1,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Icon(Icons.air),
+                                  const SizedBox(
+                                    height: 5,
+                                  ),
+                                  Text(
+                                    "wind speed",
+                                    style: GoogleFonts.ubuntu(
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  const SizedBox(
+                                    height: 5,
+                                  ),
+                                  Text(
+                                    "${weatherData["wind"]["speed"]}",
+                                    style: GoogleFonts.ubuntu(),
+                                  )
+                                ],
+                              ),
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Icon(Icons.water),
+                                  const SizedBox(
+                                    height: 5,
+                                  ),
+                                  Text(
+                                    "humidity",
+                                    style: GoogleFonts.ubuntu(
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  const SizedBox(
+                                    height: 5,
+                                  ),
+                                  Text(
+                                    "${weatherData["main"]["humidity"]}",
+                                    style: GoogleFonts.ubuntu(),
+                                  )
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        // Image.network(
+                        //     "http://openweathermap.org/img/w/${weatherData.weather[0].icon}.png")
+                      ],
+                    ),
                   ),
                 ),
-              ),
+        ),
       ),
     );
   }
