@@ -206,10 +206,10 @@ class _HomeState extends State<Home> {
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 5),
                                     child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
                                         Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
                                             Row(
                                               children: [
