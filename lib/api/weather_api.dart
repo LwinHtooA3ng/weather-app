@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 String apiKey = "5b5417e6c7659fa43f3f273715ad06c6";
 
 class API {
-  getLocationAndWeather() async {
+  getWeatherWithCurrentLocation() async {
     try {
       LocationPermission permission = await Geolocator.requestPermission();
       // print(permission);
