@@ -179,6 +179,8 @@ class _HomeState extends State<Home> {
                               height: 47,
                               child: OutlinedButton(
                                   onPressed: () {
+                                    city.clear();
+                                    FocusScope.of(context).unfocus();
                                     getWeatherWithLocation();
                                   },
                                   style: OutlinedButton.styleFrom(
@@ -206,10 +208,12 @@ class _HomeState extends State<Home> {
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 5),
                                     child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
                                         Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
                                             Row(
                                               children: [
