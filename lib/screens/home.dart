@@ -128,6 +128,7 @@ class _HomeState extends State<Home> {
                   child: Padding(
                     padding: const EdgeInsets.all(20),
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         Row(
                           children: [
