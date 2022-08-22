@@ -204,6 +204,7 @@ class _HomeState extends State<Home> {
                                 color: Colors.grey[200],
                               )
                             : Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                 children: [
                                   Padding(
                                     padding: const EdgeInsets.symmetric(
@@ -259,6 +260,7 @@ class _HomeState extends State<Home> {
                                     image: AssetImage(
                                         "images/$dayOrNight/$weatherImage"),
                                     width: 220,
+                                    height: 200,
                                   ),
                                   const SizedBox(
                                     height: 10,
